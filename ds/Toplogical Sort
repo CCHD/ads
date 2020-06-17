@@ -1,0 +1,83 @@
+/*Toplogical Sort*/
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef enum {false, true} bool;
+#define MaxVertexNum 10  /* maximum number of vertices */
+typedef int Vertex;      /* vertices are numbered from 0 to MaxVertexNum-1 */
+
+typedef struct AdjVNode *PtrToAdjVNode; 
+struct AdjVNode{
+    Vertex AdjV;
+    PtrToAdjVNode Next;
+};
+
+typedef struct Vnode{
+    PtrToAdjVNode FirstEdge;
+} AdjList[MaxVertexNum];
+
+typedef struct GNode *PtrToGNode;
+struct GNode{  
+    int Nv;
+    int Ne;
+    AdjList G;
+};
+typedef PtrToGNode LGraph;
+
+LGraph ReadG(); /* details omitted */
+
+bool TopSort( LGraph Graph, Vertex TopOrder[] );
+
+int main()
+{
+    int i;
+    Vertex TopOrder[MaxVertexNum];
+    LGraph G = ReadG();
+
+    if ( TopSort(G, TopOrder)==true )
+        for ( i=0; i<G->Nv; i++ )
+            printf("%d ", TopOrder[i]);
+    else
+        printf("ERROR");
+    printf("\n");
+
+    return 0;
+}
+//拓扑排序
+bool TopSort( LGraph Graph, Vertex TopOrder[] ){
+	int count=0;
+	int *Queue;
+	int front=0;
+	int rear=0;
+	Vertex V;
+	Queue=(int*)malloc(sizeof(int)*(Graph->Nv));
+    int i;
+    int *De;
+    PtrToAdjVNode E;
+	De=(int*)malloc(sizeof(int)*(Graph->Nv));
+    for(i=0;i<Graph->Nv;i++){
+       E=Graph->G[i].FirstEdge;
+       while(E!=NULL){
+          De[E->AdjV]++;
+          E=E->Next;
+       }
+    }
+    for(i=0;i<Graph->Nv;i++)
+       if(!De[i])
+       Queue[rear++]=i;
+    while(front!=rear){
+          V=Queue[front++];
+          TopOrder[count++]=V;
+          E=Graph->G[V].FirstEdge;
+          while(E!=NULL){
+          De[E->AdjV]--;
+          if(!De[E->AdjV])
+            Queue[rear++]=E->AdjV;
+          E=E->Next;
+          }
+    }
+    if(count!=Graph->Nv)
+    return false;
+    else
+    return true;
+}

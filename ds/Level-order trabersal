@@ -1,0 +1,14 @@
+void Level_order (Tree T, void (*visit)(Tree ThisNode)){
+     Tree tmp[MaxTree+1];
+     int head=0,tail=0;
+     int i;
+     for(i=0;i<MaxTree+1;i++)
+         tmp[i]=NULL;
+         tmp[0]=T;
+        while(tmp[head]){
+         (*visit)(tmp[head]);
+         if(tmp[head]->Left) tmp[++tail]=tmp[head]->Left;
+         if(tmp[head]->Right) tmp[++tail]=tmp[head]->Right;
+         head++;
+         }
+     }
